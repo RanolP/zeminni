@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import BggHeader from '../../components/BggHeader.astro';
+import { thing } from '../../shared/bgg';
 
 export async function getStaticPaths() {
   const entries = await getCollection('boardgame');
@@ -13,13 +14,26 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
+
+const id = entry.data['bgg-id'];
+const [boardgame] = await thing({
+  id: id.toString(),
+  withStats: true,
+});
+if (!boardgame) throw new Error(`No BGG game found with id '${id}'`);
+
+const nameLocalized = boardgame.name.alternate.find((s) => s.match(/[가-힣]/));
+const title =
+  entry.data.title ??
+  (nameLocalized
+    ? `${nameLocalized} (${boardgame.name.primary})`
+    : boardgame.name.primary);
 ---
 
-<Layout title="">
+<Layout title={`Zeminni - ${title}`}>
   <a href="/boardgame">목록으로</a>
-  <BggHeader id={entry.data['bgg-id']} />
+  <BggHeader boardgame={boardgame} />
   <main>
-    <h1>{entry.data.title}</h1>
     <Content />
   </main>
 </Layout>

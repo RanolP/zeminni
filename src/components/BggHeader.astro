@@ -1,27 +1,23 @@
 ---
-import { thing } from '../shared/bgg';
+import type { Item } from '../shared/bgg/schemas/Item';
 import BoardgameTitle from './BoardgameTitle.astro';
 
 interface Props {
   title?: string;
-  id: number;
+  boardgame: Item;
 }
-const { title, id } = Astro.props;
-
-const [game] = await thing({
-  id: id.toString(),
-  withStats: true,
-});
-if (!game) throw new Error(`No BGG game found with id '${id}'`);
+const { title, boardgame } = Astro.props;
 ---
 
 <header>
   <h1>
-    <BoardgameTitle title={title} boardgame={game} />
+    <BoardgameTitle title={title} boardgame={boardgame} />
   </h1>
   <div>
     <p>
-      {game.age.min}세 이상, {game.players.min}인 ~ {game.players.max}인
+      {boardgame.age.min}세 이상, {boardgame.players.min}인 ~ {
+        boardgame.players.max
+      }인
     </p>
   </div>
 </header>
