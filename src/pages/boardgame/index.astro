@@ -49,7 +49,11 @@ const fmt = new Intl.NumberFormat('ko-KR', {
                 )}
               </a>
               {boardgame && (
-                <a href={`https://boardgamegeek.com/boardgame/${boardgame.id}`}>
+                <a
+                  href={`https://boardgamegeek.com/boardgame/${boardgame.id}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
                   (BoardGameGeek)
                 </a>
               )}
