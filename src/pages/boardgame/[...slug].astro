@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import BggHeader from '../../components/BggHeader.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('boardgame');
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<Layout title="">
+  <a href="/boardgame">목록으로</a>
+  <BggHeader id={entry.data['bgg-id']} />
+  <main>
+    <h1>{entry.data.title}</h1>
+    <Content />
+  </main>
+</Layout>
+
+<style>
+  a,
+  a:visited {
+    color: inherit;
+  }
+</style>

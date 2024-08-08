@@ -1,0 +1,33 @@
+---
+import { thing } from '../shared/bgg';
+import BoardgameTitle from './BoardgameTitle.astro';
+
+interface Props {
+  title?: string;
+  id: number;
+}
+const { title, id } = Astro.props;
+
+const [game] = await thing({
+  id: id.toString(),
+  withStats: true,
+});
+if (!game) throw new Error(`No BGG game found with id '${id}'`);
+---
+
+<header>
+  <h1>
+    <BoardgameTitle title={title} boardgame={game} />
+  </h1>
+  <div>
+    <p>
+      {game.age.min}세 이상, {game.players.min}인 ~ {game.players.max}인
+    </p>
+  </div>
+</header>
+
+<style>
+  h1 small {
+    color: gray;
+  }
+</style>

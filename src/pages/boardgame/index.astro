@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { thing } from '../../shared/bgg';
+import BoardgameTitle from '../../components/BoardgameTitle.astro';
+
+const entries = await getCollection('boardgame');
+const boardgames = Object.fromEntries(
+  (
+    await thing({
+      id: entries.map((entry) => entry.data['bgg-id'].toString()),
+      withStats: true,
+    })
+  ).map((game) => [game.id, game]),
+);
+
+const fmt = new Intl.NumberFormat('ko-KR', {
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 1,
+});
+---
+
+<Layout title="">
+  <main>
+    <ul>
+      {
+        entries.map((entry) => {
+          const boardgame = boardgames[entry.data['bgg-id']];
+          return (
+            <li>
+              <a href={`/boardgame/${entry.slug}`}>
+                {boardgame ? (
+                  <>
+                    <BoardgameTitle
+                      title={entry.data.title}
+                      boardgame={boardgame}
+                    />
+                    <small>
+                      {fmt.format(boardgame.statistics.ratings.average)} /
+                      10.0점,
+                      {boardgame.age.min}세 이상,
+                      {boardgame.players.min}~{boardgame.players.max}인, 무게감{' '}
+                      {fmt.format(boardgame.statistics.ratings.averageweight)} /
+                      5.0
+                    </small>
+                  </>
+                ) : (
+                  `/boardgame/${entry.slug}`
+                )}
+              </a>
+              {boardgame && (
+                <a href={`https://boardgamegeek.com/boardgame/${boardgame.id}`}>
+                  (BoardGameGeek)
+                </a>
+              )}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </main>
+</Layout>
+
+<style>
+  main {
+    font-size: 2rem;
+  }
+  a,
+  a:visited {
+    color: #aaaaff;
+  }
+</style>

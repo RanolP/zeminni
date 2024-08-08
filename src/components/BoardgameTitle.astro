@@ -1,0 +1,22 @@
+---
+import type { Item } from '../shared/bgg/schemas/Item';
+
+interface Props {
+  title?: string | undefined;
+  boardgame: Pick<Item, 'name'>;
+}
+
+const { title, boardgame } = Astro.props;
+const nameLocalized = boardgame.name.alternate.find((s) => s.match(/[가-힣]/));
+---
+
+{
+  title ??
+    (nameLocalized ? (
+      <>
+        {nameLocalized}&#32;<small>({boardgame.name.primary})</small>
+      </>
+    ) : (
+      boardgame.name.primary
+    ))
+}
