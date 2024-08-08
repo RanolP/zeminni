@@ -5,6 +5,7 @@ import { thing } from '../../shared/bgg';
 import BoardgameTitle from '../../components/BoardgameTitle.astro';
 
 const entries = await getCollection('boardgame');
+entries.sort((a, b) => a.data['bgg-id'] - b.data['bgg-id']);
 const boardgames = Object.fromEntries(
   (
     await thing({
@@ -35,7 +36,9 @@ const fmt = new Intl.NumberFormat('ko-KR', {
                       title={entry.data.title}
                       boardgame={boardgame}
                     />
+                    -
                     <small>
+                      {boardgame.publishedYear},
                       {fmt.format(boardgame.statistics.ratings.average)} /
                       10.0점,
                       {boardgame.age.min}세 이상,
@@ -49,13 +52,16 @@ const fmt = new Intl.NumberFormat('ko-KR', {
                 )}
               </a>
               {boardgame && (
-                <a
-                  href={`https://boardgamegeek.com/boardgame/${boardgame.id}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  (BoardGameGeek)
-                </a>
+                <>
+                  &#20; //
+                  <a
+                    href={`https://boardgamegeek.com/boardgame/${boardgame.id}`}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    BoardGameGeek에서 보기
+                  </a>
+                </>
               )}
             </li>
           );
